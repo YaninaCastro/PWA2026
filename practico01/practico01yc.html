@@ -7,21 +7,16 @@
 </head>
 <body>
 <div id="app">
-    <p>Nombre: {{nombre}} </p>
-    <p>Edad: {{edad}} </p>
-    <p>Ciudad: {{ciudad}} </p>
-    <p>"Hola, mi nombre es {{nombre}}, tengo
-    {{edad}} años y vivo en {{ciudad}}."</p>
-
+    <button @click="contador++">Incrementar</button>
+    <p>contador: {{contador}} </p>
+    <button @click="contador--" >decrementar</button>
 </div>
 
     <script>
     var app = new Vue({ 
         el : '#app',
         data: {
-            nombre: "Ana García",
-            edad: 30,
-            ciudad: "Tupungato"
+            contador:0
         }
 
     })
