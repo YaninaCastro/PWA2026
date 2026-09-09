@@ -7,18 +7,58 @@
 </head>
 <body>
 <div id="app">
-    <button @click="contador++">Incrementar</button>
-    <p>contador: {{contador}} </p>
-    <button @click="contador--" >decrementar</button>
+    <input v-model="nuevaTarea">
+    <button @click="agregarTarea">Añadir tarea</button>
+    <ul>
+    <li  v-for="tarea in tareas" >tarea nro {{ tarea.id}} {{tarea.texto}} 
+        <input type="checkbox" v-model="tarea.completada">
+    </li>
+    </ul>
+    <span>Total de tareas: {{totalTareas}}</span><br>
+    <span>Tareas pendientes: {{tareasPendientes}}</span>
+
+
 </div>
 
     <script>
     var app = new Vue({ 
         el : '#app',
         data: {
-            contador:0
-        }
+            nuevaTarea:"",
+            tareas:[{'id':1, 'texto':'Aprender Vue', 'completada':false},
+                    {'id':2, 'texto':'Rendir PWD', 'completada':false},
+                    {'id':3, 'texto':'Aprobar las materias del segundo cuatri', 'completada':false}]
 
+        },
+        methods: {
+            agregarTarea(){
+                tareaNueva= {
+                    'id': this.tareas.length +1,
+                    'texto':this.nuevaTarea,
+                    'completada': false
+                    }
+                this.tareas.push(tareaNueva)
+                this.nuevaTarea=""
+                }
+            },
+            computed: {
+                tareasPendientes(){
+                    total=0
+                    for (this.tarea of this.tareas){
+                        if (this.tarea.completada===false)
+                            total +=1
+                        }
+                    return total;
+                },
+                totalTareas(){
+                    total=0
+                    for (this.tarea of this.tareas){
+                            total +=1
+                        }
+                    return total;
+                }
+
+            }
     })
 
 </script>
