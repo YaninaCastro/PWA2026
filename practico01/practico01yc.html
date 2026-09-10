@@ -16,20 +16,86 @@
     </ul>
     <span>Total de tareas: {{totalTareas}}</span><br>
     <span>Tareas pendientes: {{tareasPendientes}}</span>
-
+    <ul>
+    <li  v-for="evento in listaeventos" >Evento {{ evento.id}}  {{ evento.nombre}} {{evento.timestamp}} 
+    </li>
+   
+    </ul>
+    <eventos-hooks v-if="mostrarHooks" @evento="sumarEvento" @destruir="destruirHooks"></eventos-hooks>
 
 </div>
 
-    <script>
+<script>
+
+
+    Vue.component('eventos-hooks', {
+            template: ` <div style="display:none">
+                        {{ actualizado }}
+                        </div>`
+            ,
+            data(){ 
+                return {
+                    actualizado:false
+                }
+            }
+            ,
+            methods: {
+                agregarEvento(nombre){
+                        evento= {
+                        'nombre': nombre,
+                        'timestamp': Date.now()
+                        }
+                this.$emit('evento', evento)  
+
+                }
+            },
+
+            beforeCreate(){
+                evento= {
+                        'nombre': 'beforeCreate',
+                        'timestamp': Date.now()
+                        }
+                this.$emit('evento', evento)  
+            },
+            created(){
+                this.agregarEvento('created')
+            },
+            beforeMount(){
+                this.agregarEvento('beforeMount')
+            },
+            mounted(){
+                this.agregarEvento('mounted')
+                this.actualizado=true
+            },
+            beforeUpdate(){
+                this.agregarEvento('beforeUpdate')
+            },
+            updated(){
+            this.agregarEvento('updated')
+            this.$emit('destruir')
+            },
+            beforeDestroy(){
+            this.agregarEvento('beforeDestroy')
+            },
+            destroyed(){
+            this.agregarEvento('destroyed')
+            }
+
+        })
+
+
     var app = new Vue({ 
         el : '#app',
         data: {
             nuevaTarea:"",
             tareas:[{'id':1, 'texto':'Aprender Vue', 'completada':false},
                     {'id':2, 'texto':'Rendir PWD', 'completada':false},
-                    {'id':3, 'texto':'Aprobar las materias del segundo cuatri', 'completada':false}]
-
-        },
+                    {'id':3, 'texto':'Aprobar las materias del segundo cuatri', 'completada':false}],
+            listaeventos:[],
+            mostrarHooks:true
+            
+        }
+        ,
         methods: {
             agregarTarea(){
                 tareaNueva= {
@@ -39,23 +105,34 @@
                     }
                 this.tareas.push(tareaNueva)
                 this.nuevaTarea=""
-                }
-            },
-            computed: {
-                tareasPendientes(){
-                    total=0
-                    for (this.tarea of this.tareas){
-                        if (this.tarea.completada===false)
-                            total +=1
-                        }
-                    return total;
                 },
-                totalTareas(){
-                    total= this.tareas.length
-                    return total;
-                }
-
+            sumarEvento(evento){
+                evento.id=this.listaeventos.length+1
+                this.listaeventos.push(evento)
+                },
+            destruirHooks() {
+                this.mostrarHooks=false
             }
+
+            
+            },
+
+        computed: {
+            tareasPendientes(){
+                total=0
+                for (this.tarea of this.tareas){
+                    if (this.tarea.completada===false)
+                        total +=1
+                    }
+                return total;
+            },
+            totalTareas(){
+                total= this.tareas.length
+                return total;
+            }
+        },
+      
+
     })
 
 </script>
