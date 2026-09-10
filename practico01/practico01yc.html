@@ -9,19 +9,22 @@
 <body>
 <div id="app">
 
-    <h3>Post</h3>
+    <h3>Posts</h3>
 
-    <p v-if="post">
-        ID: {{ post.id }} <br>
-        Título: {{ post.title }}
-    </p>
+    <ul>
+        <li v-for="post in posts" @click="mostrarComments(post.id)">
+            ID: {{ post.id }} <br>
+            Título: {{ post.title }}
+        </li>
+    </ul>
 
     <h3>Comentarios</h3>
 
     <ul>
         <li v-for="comentario in comentarios">
             Nombre: {{ comentario.name }} <br>
-            Email: {{ comentario.email }}
+            Email: {{ comentario.email }} <br>
+            Comentario: {{ comentario.body }}
         </li>
     </ul>
 
@@ -34,14 +37,24 @@ var app = new Vue({
     el: "#app",
 
     data: {
-        post: null,
+        posts: [],
         comentarios: []
     },
 
     mounted: function() {
 
-        this.mostrarPost();
-        this.mostrarComments();
+        var that = this;
+
+        for (var i = 1; i <= 10; i++) {
+
+            this.obtenerPost(i)
+                .then(function(post) {
+
+                    that.posts.push(post);
+
+                });
+
+        }
 
     },
 
@@ -79,29 +92,17 @@ var app = new Vue({
         },
 
 
-        mostrarPost() {
+        mostrarComments(postId) {
 
             var that = this;
 
-            this.obtenerPost(1)
-                .then(function(post) {
-
-                    that.post = post;
-
-                });
-        },
-
-
-        mostrarComments() {
-
-            var that = this;
-
-            this.obtenerComments(1)
+            this.obtenerComments(postId)
                 .then(function(comentarios) {
 
                     that.comentarios = comentarios;
 
                 });
+
         }
 
     }
