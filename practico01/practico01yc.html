@@ -4,136 +4,111 @@
     <meta charset="UTF-8">
     <title>practico01</title>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
 <div id="app">
-    <input v-model="nuevaTarea">
-    <button @click="agregarTarea">Añadir tarea</button>
+
+    <h3>Post</h3>
+
+    <p v-if="post">
+        ID: {{ post.id }} <br>
+        Título: {{ post.title }}
+    </p>
+
+    <h3>Comentarios</h3>
+
     <ul>
-    <li  v-for="tarea in tareas" >tarea nro {{ tarea.id}} {{tarea.texto}} 
-        <input type="checkbox" v-model="tarea.completada">
-    </li>
+        <li v-for="comentario in comentarios">
+            Nombre: {{ comentario.name }} <br>
+            Email: {{ comentario.email }}
+        </li>
     </ul>
-    <span>Total de tareas: {{totalTareas}}</span><br>
-    <span>Tareas pendientes: {{tareasPendientes}}</span>
-    <ul>
-    <li  v-for="evento in listaeventos" >Evento {{ evento.id}}  {{ evento.nombre}} {{evento.timestamp}} 
-    </li>
-   
-    </ul>
-    <eventos-hooks v-if="mostrarHooks" @evento="sumarEvento" @destruir="destruirHooks"></eventos-hooks>
 
 </div>
 
 <script>
 
+var app = new Vue({
 
-    Vue.component('eventos-hooks', {
-            template: ` <div style="display:none">
-                        {{ actualizado }}
-                        </div>`
-            ,
-            data(){ 
-                return {
-                    actualizado:false
-                }
-            }
-            ,
-            methods: {
-                agregarEvento(nombre){
-                        evento= {
-                        'nombre': nombre,
-                        'timestamp': Date.now()
-                        }
-                this.$emit('evento', evento)  
+    el: "#app",
 
-                }
-            },
+    data: {
+        post: null,
+        comentarios: []
+    },
 
-            beforeCreate(){
-                evento= {
-                        'nombre': 'beforeCreate',
-                        'timestamp': Date.now()
-                        }
-                this.$emit('evento', evento)  
-            },
-            created(){
-                this.agregarEvento('created')
-            },
-            beforeMount(){
-                this.agregarEvento('beforeMount')
-            },
-            mounted(){
-                this.agregarEvento('mounted')
-                this.actualizado=true
-            },
-            beforeUpdate(){
-                this.agregarEvento('beforeUpdate')
-            },
-            updated(){
-            this.agregarEvento('updated')
-            this.$emit('destruir')
-            },
-            beforeDestroy(){
-            this.agregarEvento('beforeDestroy')
-            },
-            destroyed(){
-            this.agregarEvento('destroyed')
-            }
+    mounted: function() {
 
-        })
+        this.mostrarPost();
+        this.mostrarComments();
 
+    },
 
-    var app = new Vue({ 
-        el : '#app',
-        data: {
-            nuevaTarea:"",
-            tareas:[{'id':1, 'texto':'Aprender Vue', 'completada':false},
-                    {'id':2, 'texto':'Rendir PWD', 'completada':false},
-                    {'id':3, 'texto':'Aprobar las materias del segundo cuatri', 'completada':false}],
-            listaeventos:[],
-            mostrarHooks:true
-            
-        }
-        ,
-        methods: {
-            agregarTarea(){
-                tareaNueva= {
-                    'id': this.tareas.length +1,
-                    'texto':this.nuevaTarea,
-                    'completada': false
-                    }
-                this.tareas.push(tareaNueva)
-                this.nuevaTarea=""
-                },
-            sumarEvento(evento){
-                evento.id=this.listaeventos.length+1
-                this.listaeventos.push(evento)
-                },
-            destruirHooks() {
-                this.mostrarHooks=false
-            }
+    methods: {
 
-            
-            },
+        obtenerPost(postId) {
 
-        computed: {
-            tareasPendientes(){
-                total=0
-                for (this.tarea of this.tareas){
-                    if (this.tarea.completada===false)
-                        total +=1
-                    }
-                return total;
-            },
-            totalTareas(){
-                total= this.tareas.length
-                return total;
-            }
+            return axios.get('https://jsonplaceholder.typicode.com/posts/' + postId)
+                .then(function(response) {
+
+                    return response.data;
+
+                })
+                .catch(error => {
+
+                    console.error(error);
+
+                });
         },
-      
 
-    })
+
+        obtenerComments(postId) {
+
+            return axios.get('https://jsonplaceholder.typicode.com/posts/' + postId + '/comments')
+                .then(function(response) {
+
+                    return response.data;
+
+                })
+                .catch(error => {
+
+                    console.error(error);
+
+                });
+        },
+
+
+        mostrarPost() {
+
+            var that = this;
+
+            this.obtenerPost(1)
+                .then(function(post) {
+
+                    that.post = post;
+
+                });
+        },
+
+
+        mostrarComments() {
+
+            var that = this;
+
+            this.obtenerComments(1)
+                .then(function(comentarios) {
+
+                    that.comentarios = comentarios;
+
+                });
+        }
+
+    }
+
+});
+
+
 
 </script>
 
