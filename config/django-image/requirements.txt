@@ -1,0 +1,6 @@
+
+Django
+psycopg[binary]
+django-rest-auth
+djangorestframework
+djangorestframework-jwt
