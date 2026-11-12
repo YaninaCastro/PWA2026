@@ -28,3 +28,17 @@ null: por defecto está en false, solo se registra cuando una columna tiene que 
 FK: siempre on_delete=models.CASCADE para borrar el registro relacionado(ej:materia) al objeto padre(ej:Carrera) por así decirlo.
 id de FK: tampoco hace falta porque Django ya asigna ej: carrera_id por defecto
 '''
+
+class ReservaAula(models.Model):
+    
+    aula=models.ForeignKey(Aula,on_delete=models.CASCADE)
+    fh_desde=models.DateTimeField()
+    fh_hasta=models.DateTimeField()
+    observacion=models.CharField(max_length=256) #no use TextField porque usualmente se utiliza sin límite y como marcaba 256
+                                                #por eso deje CharField con 256 de tope
+
+class HorarioMateria(models.Model):
+    materia = models.ForeignKey(Materia, on_delete=models.CASCADE)
+    reserva = models.ForeignKey(ReservaAula, on_delete=models.CASCADE)
+    fh_desde = models.DateTimeField()
+    fh_hasta = models.DateTimeField() 
