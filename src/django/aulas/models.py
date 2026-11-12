@@ -22,3 +22,9 @@ class Aula(models.Model):
     aforo=models.IntegerField(default=0)
     es_climatizada=models.BooleanField(default=False)
 
+'''
+id autoincrementales: no los agregué porque Django los genera por defecto.
+null: por defecto está en false, solo se registra cuando una columna tiene que ser null cambiandolo a true.
+FK: siempre on_delete=models.CASCADE para borrar el registro relacionado(ej:materia) al objeto padre(ej:Carrera) por así decirlo.
+id de FK: tampoco hace falta porque Django ya asigna ej: carrera_id por defecto
+'''
